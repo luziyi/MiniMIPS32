@@ -224,3 +224,31 @@ make_helper(jalr) {
     cpu.pc -= 4; // 为了保证在cpu_exec()中的pc += 4
     sprintf(assembly, "jalr   %s", REG_NAME(op_src1->reg));
 }
+
+make_helper(mfhi) {
+
+	uint32_t reg = (instr >> 11) & 0x1F; // 得到rd的地址
+	reg_w(reg) = cpu.hi;
+	sprintf(assembly, "mfhi   %s", REG_NAME(reg));
+}
+
+make_helper(mflo) {
+
+	uint32_t reg = (instr >> 11) & 0x1F;
+	reg_w(reg) = cpu.lo;
+	sprintf(assembly, "mflo   %s", REG_NAME(reg));
+}
+
+make_helper(mthi) {
+
+	uint32_t reg = (instr >> 21) & 0x1F;
+	cpu.hi = reg_w(reg);
+	sprintf(assembly, "mthi   %s", REG_NAME(reg));
+}
+
+make_helper(mtlo) {
+	
+	uint32_t reg = (instr >> 21) & 0x1F;
+	cpu.lo = reg_w(reg);
+	sprintf(assembly, "mtlo   %s", REG_NAME(reg));
+}

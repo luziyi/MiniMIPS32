@@ -36,7 +36,7 @@ op_fun _2byte_opcode_table [64] = {
 /* 0x04 */	sllv, inv, srlv, srav, 
 /* 0x08 */	jr, jalr, inv, inv, 
 /* 0x0c */	inv, inv, inv, inv, 
-/* 0x10 */	inv, inv, inv, inv, 
+/* 0x10 */	mfhi, inv, mflo, mtlo, 
 /* 0x14 */	inv, inv, inv, inv, 
 /* 0x18 */	mult, multu, div, divu, 
 /* 0x1c */	inv, inv, inv, inv, 

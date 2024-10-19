@@ -127,3 +127,140 @@ make_helper(sltiu)
 	sprintf(assembly, "sltiu %s, %s, 0x%04x", REG_NAME(op_dest->reg), REG_NAME(op_src1->reg), op_src2->val);
 }
 
+make_helper(beq)
+{
+	
+	decode_imm_type(instr);
+	if (reg_w(op_dest->reg) == reg_w(op_src1->reg)){
+		int imm;
+		if (op_src2->val & 0x8000){
+			imm = (0xFFFF << 16) | op_src2->val;
+		}
+		else{
+			imm = op_src2->val;
+		}
+		uint32_t addr = (int)cpu.pc + (imm << 2);
+		cpu.pc = addr;
+	}
+	sprintf(assembly, "beq %s, %s, 0x%04x", REG_NAME(op_src1->reg), REG_NAME(op_dest->reg), op_src2->val);
+}
+
+make_helper(bne) {
+
+    decode_imm_type(instr);
+    if (reg_w(op_dest->reg) != reg_w(op_src1->reg)) {
+        int imm;
+        if (op_src2->val & 0x8000) {
+            imm = (0xFFFF << 16) | op_src2->val;
+        } else {
+            imm = op_src2->val;
+        }
+        uint32_t addr = (int)cpu.pc + (imm << 2);
+        cpu.pc = addr;
+    }
+    sprintf(assembly, "bne   %s, %s, 0x%04x", REG_NAME(op_src1->reg),
+            REG_NAME(op_dest->reg), op_src2->val);
+}
+
+make_helper(bgez) {
+
+    decode_imm_type(instr);
+    if ((int)op_src1->val >= 0) {
+        int imm;
+        if (op_src2->val & 0x8000) {
+            imm = (0xFFFF << 16) | op_src2->val;
+        } else {
+            imm = op_src2->val;
+        }
+        uint32_t addr = (int)cpu.pc + (imm << 2);
+        cpu.pc = addr;
+    }
+    sprintf(assembly, "bgez %s, 0x%04x", REG_NAME(op_src1->reg), op_src2->val);
+}
+
+make_helper(bltz) {
+
+    decode_imm_type(instr);
+    if ((int)op_src1->val < 0) {
+        int imm;
+        if (op_src2->val & 0x8000) {
+            imm = (0xFFFF << 16) | op_src2->val;
+        } else {
+            imm = op_src2->val;
+        }
+        uint32_t addr = (int)cpu.pc + (imm << 2);
+        cpu.pc = addr;
+    }
+    sprintf(assembly, "bltz %s, 0x%04x", REG_NAME(op_src1->reg), op_src2->val);
+}
+
+make_helper(bltzal) {
+
+    decode_imm_type(instr);
+    if (((int)op_src1->val) < 0) {
+        int temp;
+        if (op_src2->val & 0x8000) {
+            temp = (0xFFFF << 16) | op_src2->val;
+        } else {
+            temp = op_src2->val;
+        }
+        uint32_t addr = cpu.pc + (temp << 2);
+        reg_w(31) = cpu.pc + 8;
+        cpu.pc = addr;
+    } else {
+        reg_w(31) = cpu.pc + 8;
+    }
+    sprintf(assembly, "BLTZAL %s, 0x%04x", REG_NAME(op_src1->reg),
+            op_src2->val);
+}
+
+make_helper(bgezal) {
+
+    decode_imm_type(instr);
+    if (((int)op_src1->val) >= 0) {
+        int temp;
+        if (op_src2->val & 0x8000) {
+            temp = (0xFFFF << 16) | op_src2->val;
+        } else {
+            temp = op_src2->val;
+        }
+        uint32_t addr = cpu.pc + (temp << 2);
+        reg_w(31) = cpu.pc + 8;
+        cpu.pc = addr;
+    } else {
+        reg_w(31) = cpu.pc + 8;
+    }
+    sprintf(assembly, "BGEZAL %s, 0x%04x", REG_NAME(op_src1->reg),
+            op_src2->val);
+}
+
+make_helper(bgtz) {
+    decode_imm_type(instr);
+    if ((int)op_src1->val > 0) {
+        int imm;
+        if (op_src2->val & 0x8000) {
+            imm = (0xFFFF << 16) | op_src2->val;
+        } else {
+            imm = op_src2->val;
+        }
+        uint32_t addr = (int)cpu.pc + (imm << 2);
+        cpu.pc = addr;
+    }
+    sprintf(assembly, "bgtz %s, 0x%04x", REG_NAME(op_src1->reg), op_src2->val);
+}
+
+make_helper(blez) {
+	
+    decode_imm_type(instr);
+    if ((int)op_src1->val <= 0) {
+        int imm;
+        if (op_src2->val & 0x8000) {
+            imm = (0xFFFF << 16) | op_src2->val;
+        } else {
+            imm = op_src2->val;
+        }
+        uint32_t addr = (int)cpu.pc + (imm << 2);
+        cpu.pc = addr;
+    }
+    sprintf(assembly, "blez %s, 0x%04x", REG_NAME(op_src1->reg), op_src2->val);
+}

@@ -21,6 +21,7 @@ make_helper(div);
 make_helper(divu);
 make_helper(mult);
 make_helper(multu);
-
+make_helper(jr);
+make_helper(jalr);
 
 #endif

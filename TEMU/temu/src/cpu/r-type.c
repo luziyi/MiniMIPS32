@@ -208,3 +208,19 @@ make_helper(multu) {
 	sprintf(assembly, "multu   %s,   %s", REG_NAME(op_src1->reg), REG_NAME(op_src2->reg));
 }
 
+make_helper(jr) {
+
+    decode_r_type(instr);
+    cpu.pc = op_src1->val;
+    cpu.pc -= 4;
+    sprintf(assembly, "jr   %s", REG_NAME(op_src1->reg));
+}
+
+make_helper(jalr) {
+
+    decode_r_type(instr);
+    reg_w(op_dest->reg) = cpu.pc + 8;
+    cpu.pc = op_src1->val;
+    cpu.pc -= 4; // 为了保证在cpu_exec()中的pc += 4
+    sprintf(assembly, "jalr   %s", REG_NAME(op_src1->reg));
+}

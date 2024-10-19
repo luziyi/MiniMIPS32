@@ -47,3 +47,83 @@ make_helper(xori) {
 	reg_w(op_dest->reg) = op_src1->val ^ op_src2->val;
 	sprintf(assembly, "xori   %s,   %s,   0x%04x", REG_NAME(op_dest->reg), REG_NAME(op_src1->reg), op_src2->imm);
 }
+
+make_helper(addi){
+
+	decode_imm_type(instr);
+	// sign_extend
+	int imm;
+	if (op_src2->val & 0x8000){
+		imm = (0xFFFF << 16) | op_src2->val;
+	}
+	else{
+		imm = op_src2->val;
+	}
+	int res = (int)op_src1->val + imm;
+	// if overflow
+	if (((int)op_src1->val > 0 && imm > 0 && res < 0) || ((int)op_src1->val < 0 && imm < 0 && res > 0)){
+		// TODO: exception
+		if (cpu.cp0.status.EXL == 0){
+			cpu.cp0.cause.ExcCode = Ov;
+			cpu.cp0.EPC = cpu.pc;
+			cpu.pc = TRAP_ADDR;
+			cpu.cp0.status.EXL = 1;
+		}
+	}
+	else{
+		reg_w(op_dest->reg) = res;
+	}
+	sprintf(assembly, "addi %s, %s, 0x%04x", REG_NAME(op_dest->reg), REG_NAME(op_src1->reg), op_src2->val);
+}
+
+make_helper(addiu)
+{
+	decode_imm_type(instr);
+	// sign_extend
+	int imm;
+	if (op_src2->val & 0x8000)
+	{
+		imm = (0xFFFF << 16) | op_src2->val;
+	}
+	else
+	{
+		imm = op_src2->val;
+	}
+	reg_w(op_dest->reg) = imm + op_src1->val;
+	sprintf(assembly, "addiu %s, %s, 0x%04x", REG_NAME(op_dest->reg), REG_NAME(op_src1->reg), op_src2->val);
+}
+
+make_helper(slti)
+{
+	decode_imm_type(instr);
+	// sign_extend
+	int imm;
+	if (op_src2->val & 0x8000)
+	{
+		imm = (0xFFFF << 16) | op_src2->val;
+	}
+	else
+	{
+		imm = op_src2->val;
+	}
+	reg_w(op_dest->reg) = ((int)op_src1->val < imm) ? 1 : 0;
+	sprintf(assembly, "slti %s, %s, 0x%04x", REG_NAME(op_dest->reg), REG_NAME(op_src1->reg), op_src2->val);
+}
+
+make_helper(sltiu)
+{
+	decode_imm_type(instr);
+	// sign_extend
+	int imm;
+	if (op_src2->val & 0x8000)
+	{
+		imm = (0xFFFF << 16) | op_src2->val;
+	}
+	else
+	{
+		imm = op_src2->val;
+	}
+	reg_w(op_dest->reg) = (op_src1->val < imm) ? 1 : 0;
+	sprintf(assembly, "sltiu %s, %s, 0x%04x", REG_NAME(op_dest->reg), REG_NAME(op_src1->reg), op_src2->val);
+}
+
